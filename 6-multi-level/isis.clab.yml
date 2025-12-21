@@ -1,0 +1,37 @@
+name: "6-multi-level"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - r1/frr.conf:/etc/frr/frr.conf
+        - r1/daemons:/etc/frr/daemons
+        - r1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - r2/frr.conf:/etc/frr/frr.conf
+        - r2/daemons:/etc/frr/daemons
+        - r2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    r3:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - r3/frr.conf:/etc/frr/frr.conf
+        - r3/daemons:/etc/frr/daemons
+        - r3/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+
+  links:
+    - endpoints: ["r1:eth1","r2:eth1"]
+    - endpoints: ["r2:eth2","r3:eth1"]
+    - endpoints: ["r1:eth2","r3:eth2"]

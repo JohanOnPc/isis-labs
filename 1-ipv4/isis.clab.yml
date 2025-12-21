@@ -1,0 +1,36 @@
+name: "1-ipv4"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    x1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - x1/frr.conf:/etc/frr/frr.conf
+        - x1/daemons:/etc/frr/daemons
+        - x1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    x2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - x2/frr.conf:/etc/frr/frr.conf
+        - x2/daemons:/etc/frr/daemons
+        - x2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    rtr:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - rtr/frr.conf:/etc/frr/frr.conf
+        - rtr/daemons:/etc/frr/daemons
+        - rtr/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+
+  links:
+    - endpoints: ["rtr:eth1","x1:eth1"]
+    - endpoints: ["rtr:eth2","x2:eth1"]

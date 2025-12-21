@@ -1,0 +1,2 @@
+sudo clab deploy 
+docker exec -it <container-name> <shell>
