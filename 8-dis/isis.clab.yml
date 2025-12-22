@@ -1,0 +1,39 @@
+name: "8-dis"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    hub:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - hub/frr.conf:/etc/frr/frr.conf
+        - hub/daemons:/etc/frr/daemons
+        - hub/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    s1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - s1/frr.conf:/etc/frr/frr.conf
+        - s1/daemons:/etc/frr/daemons
+        - s1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    s2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - s2/frr.conf:/etc/frr/frr.conf
+        - s2/daemons:/etc/frr/daemons
+        - s2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    LAN:
+      kind: bridge
+
+  links:
+    - endpoints: ["hub:eth1","LAN:eth1"]
+    - endpoints: ["s1:eth1","LAN:eth2"]
+    - endpoints: ["s2:eth1","LAN:eth3"]
