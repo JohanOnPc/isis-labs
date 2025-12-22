@@ -12,6 +12,15 @@ topology:
         - hub/interfaces:/etc/network/interfaces:ro
       exec:
         - ifup -a
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.0
+      binds:
+        - r1/frr.conf:/etc/frr/frr.conf
+        - r1/daemons:/etc/frr/daemons
+        - r1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
     s1:
       kind: linux
       image: quay.io/frrouting/frr:10.2.0
@@ -37,3 +46,4 @@ topology:
     - endpoints: ["hub:eth1","LAN:eth1"]
     - endpoints: ["s1:eth1","LAN:eth2"]
     - endpoints: ["s2:eth1","LAN:eth3"]
+    - endpoints: ["hub:eth2","r1:eth1"]
