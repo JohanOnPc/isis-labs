@@ -1,0 +1,47 @@
+name: "11-hide-transit"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    wan:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - wan/frr.conf:/etc/frr/frr.conf
+        - wan/daemons:/etc/frr/daemons
+        - wan/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    core:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - core/frr.conf:/etc/frr/frr.conf
+        - core/daemons:/etc/frr/daemons
+        - core/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    acc1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - acc1/frr.conf:/etc/frr/frr.conf
+        - acc1/daemons:/etc/frr/daemons
+        - acc1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    acc2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - acc2/frr.conf:/etc/frr/frr.conf
+        - acc2/daemons:/etc/frr/daemons
+        - acc2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+
+  links:
+    - endpoints: ["core:eth1","acc1:eth1"]
+    - endpoints: ["core:eth2","acc2:eth1"]
+    - endpoints: ["core:eth3","wan:eth1"]
+    - endpoints: ["acc1:eth2","acc2:eth2"]
