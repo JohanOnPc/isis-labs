@@ -1,0 +1,47 @@
+name: "12-overload"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    l1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - l1/frr.conf:/etc/frr/frr.conf
+        - l1/daemons:/etc/frr/daemons
+        - l1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    l2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - l2/frr.conf:/etc/frr/frr.conf
+        - l2/daemons:/etc/frr/daemons
+        - l2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    s1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - s1/frr.conf:/etc/frr/frr.conf
+        - s1/daemons:/etc/frr/daemons
+        - s1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    s2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - s2/frr.conf:/etc/frr/frr.conf
+        - s2/daemons:/etc/frr/daemons
+        - s2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+
+  links:
+    - endpoints: ["l1:eth1","s1:eth1"]
+    - endpoints: ["l1:eth2","s2:eth1"]
+    - endpoints: ["l2:eth1","s1:eth2"]
+    - endpoints: ["l2:eth2","s2:eth2"]
