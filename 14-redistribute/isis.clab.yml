@@ -1,0 +1,42 @@
+name: "14-redistribute"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r1/frr.conf:/etc/frr/frr.conf
+        - r1/daemons:/etc/frr/daemons
+        - r1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r2/frr.conf:/etc/frr/frr.conf
+        - r2/daemons:/etc/frr/daemons
+        - r2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    x1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - x1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    x2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - x2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+
+  links:
+    - endpoints: ["r1:eth1","r2:eth1"]
+    - endpoints: ["r1:eth2","x1:eth1"]
+    - endpoints: ["r2:eth2","x2:eth1"]
