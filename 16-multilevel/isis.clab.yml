@@ -1,0 +1,45 @@
+name: "16-multilevel"
+prefix: "__lab-name"
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:latest
+      enforce-startup-config: true
+
+  nodes:
+    r1:
+      kind: nokia_srlinux
+      startup-config: r1/config.cli
+    c1:
+      kind: nokia_srlinux
+      startup-config: c1/config.cli
+    c2:
+      kind: nokia_srlinux
+      startup-config: c2/config.cli
+    x1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - x1/frr.conf:/etc/frr/frr.conf
+        - x1/daemons:/etc/frr/daemons
+        - x1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+        - ip route delete default
+    x2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - x2/frr.conf:/etc/frr/frr.conf
+        - x2/daemons:/etc/frr/daemons
+        - x2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+
+  links:
+    - endpoints: ["r1:e1-1","c1:e1-1"]
+    - endpoints: ["r1:e1-2","c2:e1-1"]
+    - endpoints: ["c1:e1-2","c2:e1-2"]
+    - endpoints: ["c1:e1-3","x1:eth1"]
+    - endpoints: ["c2:e1-3","x2:eth1"]
