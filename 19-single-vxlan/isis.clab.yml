@@ -1,0 +1,52 @@
+name: "19-single-vxlan"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r1/frr.conf:/etc/frr/frr.conf
+        - r1/daemons:/etc/frr/daemons
+        - r1/interfaces:/etc/network/interfaces:ro
+        - r1/vxlan.sh:/tmp/vxlan.sh:ro
+      exec:
+        - ifup -a
+        - sh /tmp/vxlan.sh
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r2/frr.conf:/etc/frr/frr.conf
+        - r2/daemons:/etc/frr/daemons
+        - r2/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    r3:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r3/frr.conf:/etc/frr/frr.conf
+        - r3/daemons:/etc/frr/daemons
+        - r3/interfaces:/etc/network/interfaces:ro
+        - r3/vxlan.sh:/tmp/vxlan.sh:ro
+      exec:
+        - ifup -a
+        - sh /tmp/vxlan.sh
+    h1:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 172.16.0.3/24 dev eth1
+    h2:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 172.16.0.4/24 dev eth1
+
+  links:
+    - endpoints: ["r1:eth1","r2:eth1"]
+    - endpoints: ["r2:eth2","r3:eth1"]
+    - endpoints: ["r1:eth2","h1:eth1"]
+    - endpoints: ["r3:eth2","h2:eth1"]
