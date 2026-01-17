@@ -1,0 +1,101 @@
+name: "22-symmetric"
+prefix: "__lab-name"
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r1/frr.conf:/etc/frr/frr.conf
+        - r1/daemons:/etc/frr/daemons
+        - r1/interfaces:/etc/network/interfaces:ro
+      exec:
+        - ifup -a
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r2/frr.conf:/etc/frr/frr.conf
+        - r2/daemons:/etc/frr/daemons
+        - r2/interfaces:/etc/network/interfaces:ro
+        - r2/vxlan.sh:/tmp/vxlan.sh:ro
+      exec:
+        - ifup -a
+        - sh /tmp/vxlan.sh
+    r3:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r3/frr.conf:/etc/frr/frr.conf
+        - r3/daemons:/etc/frr/daemons
+        - r3/interfaces:/etc/network/interfaces:ro
+        - r3/vxlan.sh:/tmp/vxlan.sh:ro
+      exec:
+        - ifup -a
+        - sh /tmp/vxlan.sh
+    r4:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - r4/frr.conf:/etc/frr/frr.conf
+        - r4/daemons:/etc/frr/daemons
+        - r4/interfaces:/etc/network/interfaces:ro
+        - r4/vxlan.sh:/tmp/vxlan.sh:ro
+      exec:
+        - ifup -a
+        - sh /tmp/vxlan.sh
+
+    srv21:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 172.16.2.10/24 dev eth1
+        - ip route delete default
+        - ip route add default via 172.16.2.1
+    srv22:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 192.168.2.10/24 dev eth1
+        - ip route delete default
+        - ip route add default via 192.168.2.1
+    srv31:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 172.16.3.10/24 dev eth1
+        - ip route delete default
+        - ip route add default via 172.16.3.1
+    srv32:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 192.168.3.10/24 dev eth1
+        - ip route delete default
+        - ip route add default via 192.168.3.1
+    srv41:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 172.16.4.10/24 dev eth1
+        - ip route delete default
+        - ip route add default via 172.16.4.1
+    srv42:
+      kind: linux
+      image: wbitt/network-multitool:latest
+      exec:
+        - ip address add 192.168.4.10/24 dev eth1
+        - ip route delete default
+        - ip route add default via 192.168.4.1
+
+  links:
+    - endpoints: ["r1:eth1","r2:eth1"]
+    - endpoints: ["r1:eth2","r3:eth1"]
+    - endpoints: ["r1:eth3","r4:eth1"]
+    - endpoints: ["srv21:eth1","r2:eth2"]
+    - endpoints: ["srv22:eth1","r2:eth3"]
+    - endpoints: ["srv31:eth1","r3:eth2"]
+    - endpoints: ["srv32:eth1","r3:eth3"]
+    - endpoints: ["srv41:eth1","r4:eth2"]
+    - endpoints: ["srv42:eth1","r4:eth3"]
