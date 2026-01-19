@@ -33,8 +33,6 @@ ip route add 192.168.3.0/24 vrf vrf-red \
     nexthop via 10.0.0.3 dev vxlan1100 onlink weight 1 \
     nexthop via 10.0.0.4 dev vxlan1100 onlink weight 1
 
-ip route add 192.168.3.1/32 via 10.0.0.3 dev vxlan1100 onlink vrf vrf-red
-ip route add 192.168.3.2/32 via 10.0.0.4 dev vxlan1100 onlink vrf vrf-red
 ip route add 192.168.3.10/32 via 10.0.0.3 dev vxlan1100 onlink vrf vrf-red
 ip route add 192.168.3.20/32 via 10.0.0.4 dev vxlan1100 onlink vrf vrf-red
 

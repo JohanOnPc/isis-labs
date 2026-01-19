@@ -25,10 +25,10 @@ ip link set vrf-red up
 
 #L2VNI
 ip link add br100 type bridge
-ip address add dev br100 192.168.3.2/24
+ip address add dev br100 192.168.3.1/24
 ip link set br100 master vrf-red addrgenmode none
+ip link set br100 addr aa:bb:cc:dd:03:01
 ip link add vxlan100 type vxlan id 100 local 10.0.0.4 dstport 4789
-ip link set addr aa:bb:cc:dd:03:02
 ip link set vxlan100 master br100 addrgenmode none
 ip link set eth3 master br100
 ip link set br100 up
